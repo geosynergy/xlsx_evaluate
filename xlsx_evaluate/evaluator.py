@@ -1,5 +1,5 @@
 """Evaluate excel formulas."""
-
+import re
 import sys
 from functools import lru_cache
 from typing import Dict, Optional
@@ -71,7 +71,11 @@ class Evaluator:
             raise ValueError(
                 f'I can`t resolve {addr} to a cell. It`s a formula and they aren`t supported as a cell reference.')
 
+    def strip_absolute_ref(self, addr):
+        return re.sub('$', '', addr)
+
     def evaluate(self, addr):
+        addr = self.strip_absolute_ref(addr)
         # 1. Resolve the address to a cell.
         addr = self.resolve_names(addr)
         if addr not in self.model.cells:
